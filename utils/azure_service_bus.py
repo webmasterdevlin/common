@@ -100,10 +100,10 @@ class MessageBus:
             for msg in receiver:
                 try:
                     self.service_callback_handler(msg)
-                    # receiver.complete_message(msg)
+                    receiver.complete_message(msg)
                 except Exception as e:
                     print(f"Message processing failed: {e}")
-                    # receiver.abandon_message(msg)
+                    receiver.abandon_message(msg)
 
     def stop(self) -> None:
         """
@@ -115,6 +115,9 @@ class MessageBus:
     @_reconnect_if_required
     def acknowledge_message(self, queue: str, message: ServiceBusReceivedMessage) -> None:
         """
+        (WARNING): This method does not quickly complete the message. So current solution is
+        to use the complete_message method in the start_consuming method.
+
         Acknowledge that the message has been processed.
 
         Args:
